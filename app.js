@@ -29,6 +29,7 @@ app.use(methodOverride("_method"));
 app.engine('ejs', ejsMate);
 app.use(express.static(path.join(__dirname, "/public")));
 
+//session configuration wiith cookie settings and express-session setup
 app.use(session({
     secret: "yourSecretKeyHere",
     resave: false,
