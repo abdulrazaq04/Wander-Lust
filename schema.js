@@ -8,9 +8,10 @@ const listingSchema = Joi.object({
         location: Joi.string().required(),
         country: Joi.string().required(),
         image: Joi.object({
-            url: Joi.string().uri().required(),
-            filename: Joi.string().allow('', null)
-        }).required(),
+            url: Joi.string().uri().allow("", null).optional(),
+            filename: Joi.string().allow("", null).optional()
+        }).optional()
     }).required(),
 });
+
 module.exports.listingSchema = listingSchema;

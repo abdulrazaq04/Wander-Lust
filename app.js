@@ -59,22 +59,22 @@ const validateListing = (req, res, next) => {
 };
 
 //index route
-app.get("/listings", wrapAsync(async(req, res) => {
+app.get("/listings", async(req, res) => {
     const allListings = await Listing.find({});
     res.render("listings/index.ejs", {allListings});
-}));
+});
 
 //new route
-app.get("/listings/new", wrapAsync(async (req, res, next) => {
+app.get("/listings/new", async (req, res) => {
     res.render("listings/new.ejs")
-}));
+});
 
 //show route
-app.get("/listings/:id", wrapAsync(async (req, res, next) => {
+app.get("/listings/:id", async (req, res) => {
     let {id} = req.params; 
     const listing = await Listing.findById(id);
     res.render("listings/show.ejs", {listing});
-}));
+});
 
 //Create Route
 app.post("/listings", validateListing, wrapAsync(async (req, res) => {
@@ -84,6 +84,10 @@ app.post("/listings", validateListing, wrapAsync(async (req, res) => {
     // if(result.error){
     //     throw new ExpressError(result.error.details.map(el => el.message).join(","), 400);
     // }
+    //  Remove empty image URL so Mongoose uses default
+    if (req.body.listing.image && !req.body.listing.image.url) {
+        delete req.body.listing.image.url;
+    }
     const newListing = new Listing(req.body.listing);
     await newListing.save();
     res.redirect("/listings");
@@ -99,6 +103,9 @@ app.get("/listings/:id/edit", wrapAsync(async (req, res) => {
 //update route // validateListing is a middleware function is used here to validate the updated data 
 app.put("/listings/:id", validateListing, wrapAsync(async (req, res) => {
     let {id} = req.params;
+        if (req.body.listing.image && !req.body.listing.image.url) {
+        delete req.body.listing.image.url;
+    }
     await Listing.findByIdAndUpdate(id, {...req.body.listing});
     res.redirect(`/listings/${id}`);
 }));
