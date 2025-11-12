@@ -4,6 +4,7 @@ const wrapAsync = require("../utils/wrapAsync.js");
 const Listing = require("../models/listing.js"); 
 const { listingSchema } = require("../schema.js");
 const ExpressError = require("../utils/ExpressError.js");
+const { isLoggedIn } = require("../middleware.js");
 
 //middleware function to validate listing data using JOI schema
 const validateListing = (req, res, next) => {
@@ -16,15 +17,15 @@ const validateListing = (req, res, next) => {
 };
 
 //index route
-router.get("/", validateListing, wrapAsync( async(req, res, next) => {
+router.get("/", async(req, res) => {
     const allListings = await Listing.find({}).populate("reviews");
     res.render("listings/index.ejs", {allListings});
-}));
+});
 
 //new route
-router.get("/new", validateListing, wrapAsync( async (req, res, next) => {
-    res.render("listings/new.ejs")
-}));
+router.get("/new", isLoggedIn, (req, res) => {
+    res.render("listings/new.ejs");
+});
 
 //show route
 router.get("/:id", wrapAsync(async (req, res, next) => {
@@ -38,7 +39,7 @@ router.get("/:id", wrapAsync(async (req, res, next) => {
 }));
 
 //Create Route
-router.post("/", validateListing, wrapAsync(async (req, res, next) => {
+router.post("/",isLoggedIn, validateListing, wrapAsync(async (req, res, next) => {
     const newListing = new Listing(req.body.listing);
     console.log(req.body.listing.image);
     await newListing.save();
@@ -47,7 +48,7 @@ router.post("/", validateListing, wrapAsync(async (req, res, next) => {
 }));
 
 //Edit route
-router.get("/:id/edit", wrapAsync(async (req, res) => {
+router.get("/:id/edit",isLoggedIn, wrapAsync(async (req, res) => {
     let {id} = req.params; 
     const listing = await Listing.findById(id);
     if(!listing) {
@@ -58,7 +59,7 @@ router.get("/:id/edit", wrapAsync(async (req, res) => {
 }));
 
 //update route // validateListing is a middleware function is used here to validate the updated data 
-router.put("/:id", validateListing, wrapAsync(async (req, res) => {
+router.put("/:id",isLoggedIn, validateListing, wrapAsync(async (req, res) => {
     let {id} = req.params;
     // if (req.body.listing.image && !req.body.listing.image.url) {
     //     delete req.body.listing.image.url;
@@ -69,7 +70,7 @@ router.put("/:id", validateListing, wrapAsync(async (req, res) => {
 }));
 
 //delete route
-router.delete("/:id", wrapAsync(async (req, res, next) => {
+router.delete("/:id",isLoggedIn, wrapAsync(async (req, res, next) => {
     let {id} = req.params;
     const deletedListing = await Listing.findByIdAndDelete(id);
     console.log(deletedListing);
