@@ -50,15 +50,19 @@ router.post("/", validateListing, wrapAsync(async (req, res, next) => {
 router.get("/:id/edit", wrapAsync(async (req, res) => {
     let {id} = req.params; 
     const listing = await Listing.findById(id);
+    if(!listing) {
+        req.flash("error", "Cannot find that listing!");
+        return res.redirect("/listings");
+    }
     res.render("listings/edit.ejs", {listing});
 }));
 
 //update route // validateListing is a middleware function is used here to validate the updated data 
 router.put("/:id", validateListing, wrapAsync(async (req, res) => {
     let {id} = req.params;
-    if (req.body.listing.image && !req.body.listing.image.url) {
-        delete req.body.listing.image.url;
-    }
+    // if (req.body.listing.image && !req.body.listing.image.url) {
+    //     delete req.body.listing.image.url;
+    // }
     req.flash("success", "Successfully updated the listing!");
     await Listing.findByIdAndUpdate(id, {...req.body.listing});
     res.redirect(`/listings/${id}`);
