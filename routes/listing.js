@@ -16,7 +16,7 @@ router.get("/new", isLoggedIn, (req, res) => {
 });
 
 //show route
-router.get("/:id", wrapAsync(async (req, res, next) => {
+router.get("/:id", wrapAsync(async (req, res) => {
     let {id} = req.params; 
     const listing = await Listing.findById(id).populate("reviews").populate("owner");
     if(!listing) {
@@ -28,7 +28,11 @@ router.get("/:id", wrapAsync(async (req, res, next) => {
 }));
 
 //Create Route
-router.post("/",isLoggedIn, validateListing, wrapAsync(async (req, res, next) => {
+router.post("/",isLoggedIn, validateListing, wrapAsync(async (req, res) => {
+        // Remove empty image url so mongoose can use the default
+    if (req.body.listing.image && req.body.listing.image.url === "") {
+        delete req.body.listing.image; 
+    }
     const newListing = new Listing(req.body.listing);
     newListing.owner = req.user._id;
     console.log(req.body.listing.image);
@@ -57,7 +61,7 @@ router.put("/:id", isLoggedIn, isOwner, validateListing, wrapAsync(async (req, r
 }));
 
 //delete route
-router.delete("/:id",isLoggedIn, isOwner, wrapAsync(async (req, res, next) => {
+router.delete("/:id",isLoggedIn, isOwner, wrapAsync(async (req, res) => {
     let {id} = req.params;
     const deletedListing = await Listing.findByIdAndDelete(id);
     console.log(deletedListing);
