@@ -24,6 +24,7 @@
             <hr>
             <div class="col-md-8 offset-2 mt-3 mb-3">
                 <h4><b>Reviews:</b></h4>
+                <% if(currUser) { %>
                 <form action="/listings/<%= listing.id %>/reviews" method="POST" class="mb-4 needs-validation" novalidate>
                     <div class="mb-3">
                         <label for ="rating" class="form-label">Rating:</label>
@@ -36,19 +37,24 @@
                     </div>
                     <button type="submit" class="btn btn-outline-primary">Submit Review</button>
                 </form>
+                <% } else { %>
+                    <h4 class="mb-4">Please <a href="/login">Login</a> to add a review.</h4>
+                <% } %>
                 <hr>
                 <h4>All Reviews:</h4>
                 <% listing.reviews.forEach(review => { %>
                     <div class="row">
                     <div class="card mb-3 col-md-8 offset-2 ms-3">
                         <div class="card-body">
-                            <h6 class="card-title"><b>Name:</b> <%= review.author %></h6>
+                            <h6 class="card-title"><b>Reviewer: </b> @<%= review.author.username %></h6>
                             <p class="card-text"><b>Rating:</b> <%= review.rating %> Stars<br><b>Comment:</b> <%= review.comment %>
                             <br><b>Posted on:</b> <%= review.createdAt.toLocaleString() %></p>
                         </div>
+                        <% if(currUser && currUser._id.equals(review.author._id)) { %>
                         <form action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE" method="POST" class="mb-3">
                             <button class="btn btn-danger">Delete Review</button>
                         </form>
+                        <% } %>
                     </div>
                 <% }) %>
                 </div>
