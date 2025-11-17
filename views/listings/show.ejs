@@ -27,8 +27,20 @@
                 <% if(currUser) { %>
                 <form action="/listings/<%= listing.id %>/reviews" method="POST" class="mb-4 needs-validation" novalidate>
                     <div class="mb-3">
-                        <label for ="rating" class="form-label">Rating:</label>
-                        <input type="range" id="rating" name="review[rating]" min="1" max="5" required class="form-range">
+                    <label for ="rating" class="form-label">Rating:</label>
+                    <fieldset class="starability-slot">
+                        <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="1" checked aria-label="No rating." />
+                        <input type="radio" id="first-rate1" name="review[rating]" value="1" />
+                        <label for="first-rate1" title="Terrible">1 star</label>
+                        <input type="radio" id="first-rate2" name="review[rating]" value="2" />
+                        <label for="first-rate2" title="Not good">2 stars</label>
+                        <input type="radio" id="first-rate3" name="review[rating]" value="3" />
+                        <label for="first-rate3" title="Average">3 stars</label>
+                        <input type="radio" id="first-rate4" name="review[rating]" value="4" />
+                        <label for="first-rate4" title="Very good">4 stars</label>
+                        <input type="radio" id="first-rate5" name="review[rating]" value="5" />
+                        <label for="first-rate5" title="Amazing">5 stars</label>
+                    </fieldset>
                     </div>
                     <div class="mb-3">
                         <label for ="comment" class="form-label">Comment:</label>
@@ -47,7 +59,7 @@
                     <div class="card mb-3 col-md-8 offset-2 ms-3">
                         <div class="card-body">
                             <h6 class="card-title"><b>Reviewer: </b> @<%= review.author.username %></h6>
-                            <p class="card-text"><b>Rating:</b> <%= review.rating %> Stars<br><b>Comment:</b> <%= review.comment %>
+                            <p class="card-text starability-result" data-rating=<%= review.rating %>> Rated: <%= review.rating %></p><b>Comment:</b> <%= review.comment %>
                             <br><b>Posted on:</b> <%= review.createdAt.toLocaleString() %></p>
                         </div>
                         <% if(currUser && currUser._id.equals(review.author._id)) { %>
