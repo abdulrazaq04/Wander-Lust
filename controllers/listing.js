@@ -25,13 +25,12 @@ module.exports.showListing = async (req, res) => {
 
 // Create Route - Create a new listing
 module.exports.createListing = async (req, res) => {
-        // Remove empty image url so mongoose can use the default
-    if (req.body.listing.image && req.body.listing.image.url === "") {
-        delete req.body.listing.image; 
-    }
+    let url = req.file.path;
+    let filename = req.file.filename;
+    console.log(url, filename);
     const newListing = new Listing(req.body.listing);
     newListing.owner = req.user._id;
-    console.log(req.body.listing.image);
+    newListing.image = { url, filename };
     await newListing.save();
     req.flash("success", "Successfully created a new listing!");
     res.redirect("/listings");

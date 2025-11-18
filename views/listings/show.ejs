@@ -4,7 +4,7 @@
             <div class="col-md-8 offset-2 mt-3 mb-3">
                 <h3><i><b>Listed By: <%= listing.owner.username %></b></i></h3>
                 <div class="card listing-card" style="width: 18rem;">
-                    <img src="<%= typeof listing.image === 'string' ? listing.image : listing.image.url %>" class="card-img-top" style="height: 20rem;" alt="listing_image">
+                    <img src="<%= listing.image.url %>" class="card-img-top" style="height: 20rem;" alt="listing_image">
                 </div>
                 <h5><p><b><%= listing.title %></b></h5><br>
                     <%= listing.description %><br>
